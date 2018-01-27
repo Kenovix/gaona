@@ -1,0 +1,347 @@
+{% extends "::simple.html.twig" %}
+
+{% block stylesheets %}
+<style>
+        p {
+        
+        font-size: 9pt;
+        
+        
+        }
+        
+        
+	
+	table.paciente {
+    	font-size: 9pt;
+        border-bottom: 2px solid #000;
+        margin-top: 2%;
+    }
+</style>    
+	
+	
+{% endblock %}
+
+{% block head %}
+	<table class="paciente">
+		<tr>
+			<td width="120" align="center"><b>{{ paciente.tipoid }} - {{ paciente.identificacion }}</b></td>
+		  	<td width="200" align="center"><b>{{ paciente.prinombre|capitalize }} {{ paciente.segnombre|capitalize }} {{ paciente.priapellido|capitalize }} {{ paciente.segapellido|capitalize }}</b></td>
+		  	<td width="70" align="center"><b>{{ date('now') | date('Y-m-d') - paciente.fn | date('Y-m-d') }} Años</b></td>
+		  	<td width="180" align="center"> <b>{{ cliente.nombre }}</b></td>
+		  	<td width="90" align="center"><b>{{ entity.fecha | date('d-m-y') }}</b></td>
+	 	</tr>
+
+	 	<tr>
+	 		<td width="120" align="center"><b>Sexo: {{ paciente.sexo }}</b></td>
+		  	<td width="180" align="center"><b>{{paciente.direccion}}</b></td>
+		  	<td width="90" align="center"><b>{{ paciente.movil}}</b></td>
+		  	<td width="180" align="center"><b>{{paciente.email }}</b></td>
+		  	<td width="120" align="center"><b>FN:{{ paciente.fn | date('Y-m-d') }}</b></td>
+	 	</tr>
+	 </table>
+{% endblock %}
+
+{% block body %}
+<h1 align="center">Historia Clinica</h1>
+                <p>
+                  <b>MOTIVO DEL INGRESO</b><br/>    
+                    ~ Motivo De Consulta: {{ entity.motivo }} <br/>
+                    ~ Enfermedad Actual:  {{ entity.enfermedad}} 
+                </p>
+                
+                <p>
+		 <b>ANTECEDENTES</b><br/>
+                    ~ Antecedentes:   	{{ entity.antecedentes}}<br/>
+                    ~ Revision Sistema:	{{ entity.revSistema }}
+		
+	        </p>
+                
+                <p>
+                <b>SIGNOS VITALES</b><br/>
+                    <b>p/a: </b>{{ entity.sistole }}/{{ entity.diastole }} mm de Hg &nbsp;&nbsp;
+                    <b>Frec/card: </b>{{ entity.fC }} /Min. &nbsp;&nbsp;
+                    <b>Frec/resp: </b>{{ entity.fR }} /Min. &nbsp;&nbsp;
+                    <b>Peso: </b>{{ entity.peso }} Kg. &nbsp;&nbsp;
+                    <b>Estatura: </b>{{ entity.estatura }} /Cms. &nbsp;&nbsp;
+                    <b>IMC: </b>
+			{% if(entity.peso and entity.estatura) %}
+				{{ (entity.peso/((entity.estatura/100)*(entity.estatura/100)))|number_format(2) }} &nbsp;&nbsp;
+			{% endif %}
+                
+                </p>
+                <p>
+		 <b>EXAMEN FISICO</b><br/>
+                    ~ Fisico:  	        {{ entity.exaFisico}}
+	        </p>
+                
+		
+		{% if perHcCie%}
+                <p>
+			<b>DIAGNOSTICOS MEDICO:</b><br/>
+                        
+                <table>
+			  <thead>
+	            		<tr>
+	            			<th width="30px" align="left">No.</th>
+	                		<th width="50px" >CIE10</th>
+	                		<th width="400px">NOMBRE</th>
+	            		</tr>
+	               	</thead>
+	             <tbody>
+				    {% for permiso in perHcCie %} 
+		    		<tr>
+		    			<td width="30px" align="center">{{ loop.index}}</td>
+			    		<td width="50px" align="left">{{ permiso.codigo}}</td>
+			    		<td width="400px"align="left">{{ permiso.nombre}}</td>
+		    		</tr>
+		    		{% endfor %}
+		    </tbody>
+		</table>
+                        <b>OTROS DIAGNOSTICOS:</b><br/>
+                            ~ {{ entity.dxPresunto }}
+                        </p>
+		{% endif %}
+		
+		{% if exa_solicitado %}
+                       <p>
+			<b>EXAMENES PRESENTADOS: </b><br/>			    
+		    	
+		     	<span>{{ entity.exaPresentado }}</span>
+                       </p>
+		{% endif %}
+
+		{% if exa_solicitado %}
+                       <p>
+			<b>EXAMENES SOLICITADOS:</b><br/>			    
+		    	<table>
+			  <thead>
+	            		<tr>
+	            			<th width="30px" align="left">No.</th>
+	                		<th width="300px" >EXAMEN</th>
+	                		
+	            		</tr>
+	               	  </thead>
+                          <tbody>
+				{% for exa_sol in exa_solicitado %}   
+                                  <tr>
+                                      <td width="30px" align="left">{{loop.index}}</td>  
+                                      <td width="300px" align="left">{{ exa_sol.nombre}}</td>
+                        
+                                  </tr>
+                                {% endfor %}
+                          </tbody>
+                        </table>
+			<b>NOTA EXAMENES SOLICITADOS:</b>
+		     	{{ entity.notaExaSoli }}
+                        </p>
+		{% endif %}
+		
+		<p><b>INTERCONSULTA: </b>
+			{% if entity.interconsulta  %} 
+				{{ entity.interconsulta }}
+			{% else %}
+				No aplica.
+			{% endif %}
+                       </p>
+		
+		{% if perHcMe %}
+			<p><b>MEDICAMENTOS:</b><br/>  
+				{% for permiso in  perHcMe%}            
+
+		        	~ {{ permiso.principioActivo}} {{ permiso.presentacion}} {{ permiso.concentracion}}  {{ permiso.dosisDia }}.<br/>
+
+		        {% endfor %} 				
+		
+		{% endif %}
+                          <b>PLAN DE MANEJO: </b>{{ entity.manejo }}</p>                
+                       
+		
+           
+		
+		<p><b>CONTROL: </b>{{ entity.control }}. <br/>
+		{% if entity.ctrlPrioritario  %}
+			<b>Prioritario</b>
+		{% endif %}</p>
+		
+		
+		<p>{% if entity.inicioInca %}
+			<b>INCAPACIDAD:</b>  
+				Fecha inicio de la incapacidad {{ entity.inicioInca | date('Y-m-d') }}, tiempo que tarada la incapacidad {{ entity.duracionInca }} dias, motivo de la incapacidad {{ entity.notaInca }}				
+			
+		{% endif %}</p>	
+		
+                <p>
+		 <b>Medico: </b> {{ profesional.nombre }} {{ profesional.apellido }}<br/>
+                 <b>Especialidad:</b>{{ profesional.especialidad }}<br/>
+                 <b>Registro:</b>{{ profesional.tp }}<br/>
+                 <b>Factura:</b> {{factura.id}}<br/>
+                 Fin del documento
+                </p>
+                <p><table>{% include "HcBundle:includes:footer.html.twig" %}</table></p>
+		
+		<tcpdf method="AddPage" />
+		
+{% set i = 0 %}
+
+{% if entity.interconsulta %}
+
+{% set i = i+1 %}
+
+{% if(i is even) %}
+	{% include "HcBundle:includes:header.html.twig" %}
+{% endif %}
+
+	<table class="paciente">
+		<tr>
+			<td colspan="5"><br /><br /></td>
+		</tr>
+		<tr>
+			<td width="130" align="center"><b>{{ paciente.tipoid }} - {{ paciente.identificacion }}</b></td>
+		  	<td width="200" align="center"><b>{{ paciente.prinombre }} {{ paciente.segnombre }} {{ paciente.priapellido }} {{ paciente.segapellido }}</b></td>
+		  	<td width="70" align="center"><b>{{ date('now') | date('Y-m-d') - paciente.fn | date('Y-m-d') }} Años</b></td>
+		  	<td width="180" align="center"> <b>{{ cliente.nombre }}</b></td>
+		  	<td width="90" align="center"><b>{{ entity.fecha | date('d-m-y') }}</b></td>
+	 	</tr>
+	 </table>
+
+	<table>
+		<tr>
+			<td height="200">
+                            <p><h1 align="center">Interconsulta</h1>			    
+                            <span>{{ entity.interconsulta }}</span></p>
+			</td>
+                </tr>		
+	</table>
+               <p align="left">
+		 <b>Medico: </b> {{ profesional.nombre }} {{ profesional.apellido }}<br/>
+                 <b>Especialidad:</b> {{ profesional.especialidad }}
+                 <b>Registro:</b>{{ profesional.tp }}<br/>
+                 <b>Factura:</b> {{factura.id}}
+               </p>
+           
+
+{% endif %}
+
+
+{% if exa_solicitado %}
+
+{% set i = i+1 %}
+
+{% if(i is even) %}
+	{% include "HcBundle:includes:header.html.twig" %}
+{% endif %}
+
+	<table class="paciente">
+		<tr>
+			<td colspan="5"><br /><br /></td>
+		</tr>
+		<tr>
+			<td width="130" align="center"><b>{{ paciente.tipoid }} - {{ paciente.identificacion }}</b></td>
+		  	<td width="200" align="center"><b>{{ paciente.prinombre }} {{ paciente.segnombre }} {{ paciente.priapellido }} {{ paciente.segapellido }}</b></td>
+		  	<td width="70" align="center"><b>{{ date('now') | date('Y-m-d') - paciente.fn | date('Y-m-d') }} Años</b></td>
+		  	<td width="180" align="center"> <b>{{ cliente.nombre }}</b></td>
+		  	<td width="90" align="center"><b>{{ entity.fecha | date('d-m-y') }}</b></td>
+	 	</tr>
+	 </table>
+
+	<p><table>
+		<tr>
+			<td height="250">
+			    
+			    <h1 align="center">Examenes Solicitados</h1>
+			    
+			    <br />
+			    <p>
+			    <ul>   
+			    	{% for exa_sol in exa_solicitado %}            
+			        	<li>{{ exa_sol.codigo}} - {{ exa_sol.nombre}}</li>
+			        {% endfor %} 
+				</ul>	
+                            <span>{{ entity.notaExaSoli }}</span></p><br/>										
+			</td>
+		</tr>
+        </table></p>
+	 <p><table>{% include "HcBundle:includes:footer.html.twig" %}</table></p>  
+{% endif %}
+
+
+{% if perHcMe %}
+
+	{% set i = i+1 %}
+
+	{% if(i is even) %}
+		{% include "HcBundle:includes:header.html.twig" %}
+	{% endif %}
+
+
+	<table class="paciente">
+		<tr>
+			<td colspan="5"><br /><br /><br /></td>
+		</tr>
+		<tr>
+			<td width="130" align="center"><b>{{ paciente.tipoid }} - {{ paciente.identificacion }}</b></td>
+		  	<td width="200" align="center"><b>{{ paciente.prinombre }} {{ paciente.segnombre }} {{ paciente.priapellido }} {{ paciente.segapellido }}</b></td>
+		  	<td width="70" align="center"><b>{{ date('now') | date('Y-m-d') - paciente.fn | date('Y-m-d') }} Años</b></td>
+		  	<td width="180" align="center"> <b>{{ cliente.nombre }}</b></td>
+		  	<td width="90" align="center"><b>{{ entity.fecha | date('d-m-y') }}</b></td>
+	 	</tr>
+	 </table>
+        <h1 align="center">Fomula Medica</h1>
+	<table>
+		<tr>
+			<td height="200">    
+			    <p><ul>
+			    	{% for permiso in  perHcMe%}            
+			        	<li>{{ permiso.principioActivo}} {{ permiso.presentacion}} {{ permiso.dosisDia }} </li>
+			        {% endfor %}				
+                                        </ul></p>
+			</td>
+		</tr>
+	</table>
+        
+        <p align="left">
+		 <b>Medico:</b> {{ profesional.nombre }} {{ profesional.apellido }}<br/>
+                 <b>Especialidad:</b> {{ profesional.especialidad }}<br/>
+                 <b>Registro:</b>{{ profesional.tp }}<br/>
+                 <b>Factura:</b> {{factura.id}}
+        </p>
+	
+{% endif %}
+
+{% if entity.control %}
+	{% set i = i+1 %}
+	
+	{% if(i is even) %}
+		{% include "HcBundle:includes:header.html.twig" %}
+	{% endif %}
+
+	<table class="paciente">
+		<tr>
+			<td colspan="5"><br /><br /></td>
+		</tr>
+		<tr>
+			<td width="130" align="center"><b>{{ paciente.tipoid }} - {{ paciente.identificacion }}</b></td>
+		  	<td width="200" align="center"><b>{{ paciente.prinombre }} {{ paciente.segnombre }} {{ paciente.priapellido }} {{ paciente.segapellido }}</b></td>
+		  	<td width="70" align="center"><b>{{ date('now') | date('Y-m-d') - paciente.fn | date('Y-m-d') }} Años</b></td>
+		  	<td width="180" align="center"> <b>{{ cliente.nombre }}</b></td>
+		  	<td width="90" align="center"><b>{{ entity.fecha | date('d-m-y') }}</b></td>
+		</tr>
+	</table>
+    <h1 align="center">CONTROL</h1> 
+    <table>
+		<tr>
+			<td height="200">  
+			    <p><span>
+			    	{{ entity.control }}
+			    	{% if entity.ctrlPrioritario  %}
+						<b>Prioritario</b>
+					{% endif %}
+                               </span></p>
+			
+				<br />			
+			</td>
+		</tr>			
+	</table>
+    <p><table>{% include "HcBundle:includes:footer.html.twig" %}</table></p>
+{% endif %}
+{% endblock %}
