@@ -1,0 +1,39 @@
+# Bootstrap
+app/bootstrap*
+
+# Symfony directories
+vendor/*
+*/logs/*
+*/cache/*
+web/uploads/*
+web/rips/*
+web/bundles/acmedemo/*
+web/bundles/fosjsrouting/*
+web/bundles/framework/*
+web/bundles/sensiodistribution/*
+web/bundles/stfalcontinymce/*
+web/bundles/webprofiler/*
+web/bundles/dlaser/images/*
+
+# Configuration files
+app/config/parameters.ini
+app/config/parameters.yml
+
+# Composer
+composer.phar
+
+# IDE
+/.DS_Store
+/.classpath
+/.project
+/.settings
+/.metadata/
+/.buildpath
+/.externalToolBuilders
+*.buildpath
+*.project
+
+# OSX
+
+.DS_Store
+
